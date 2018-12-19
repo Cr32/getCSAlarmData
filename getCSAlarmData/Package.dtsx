@@ -1,0 +1,2341 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="11/14/2018 10:16:07 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="PC597"
+  DTS:CreatorName="WBOOLWATER\craig.roberts"
+  DTS:DTSID="{BDEE5780-2B40-45B9-AB08-67581C4A8476}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="13.0.2165.0"
+  DTS:LocaleID="3081"
+  DTS:ObjectName="Package"
+  DTS:PackageType="5"
+  DTS:VersionBuild="12"
+  DTS:VersionGUID="{47845A27-EED7-45A2-AA51-7044CAB33285}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Clear the tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{212D372D-F3B9-4E38-BD44-62ED3761F834}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Clear the tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}"
+          SQLTask:SqlStatementSource="truncate table csAlarms&#xA;truncate table cs_logged_on&#xA;truncate table alarms_part1&#xA;truncate table alarms_names&#xA;truncate table alarms_final&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Finalise the alarms"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{0E04671E-2780-415B-93F0-FE863B0FAB75}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Finalise the alarms"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Finalise the alarms\Merge the data"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Merge the data"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select a.id, n.id as nid, n.fullname,a.message, a.statedesc, a.conditionActiveTime, dateadd(mi,DateDiff (mi,GetUTCDATE(),Getdate()),a.conditionActiveTime) as LocalTime,
+a.severity,a.severityDesc
+From alarms_part1 a
+inner join alarms_names n
+on a.id=n.id</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Finalise the alarms\Merge the data.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[id]"
+                      name="id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[nid]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[nid]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[nid]"
+                      name="nid"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[fullname]"
+                      length="254"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[fullname]"
+                      name="fullname"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[message]"
+                      length="253"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[message]"
+                      name="message"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[statedesc]"
+                      length="31"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[statedesc]"
+                      name="statedesc"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[conditionActiveTime]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]"
+                      name="conditionActiveTime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[LocalTime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[LocalTime]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[LocalTime]"
+                      name="LocalTime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severity]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[severity]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severity]"
+                      name="severity"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[severityDesc]"
+                      length="31"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severityDesc]"
+                      name="severityDesc"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[nid]"
+                      dataType="i4"
+                      name="nid" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="fullname" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      name="message" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="statedesc" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[LocalTime]"
+                      dataType="dbTimeStamp2"
+                      name="LocalTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[severity]"
+                      dataType="i4"
+                      name="severity" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].ExternalColumns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="severityDesc" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      name="id" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[nid]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[nid]"
+                      name="nid" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[fullname]"
+                      name="fullname" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[message]"
+                      name="message" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[statedesc]"
+                      name="statedesc" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[conditionActiveTime]"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[LocalTime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[LocalTime]"
+                      name="LocalTime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[severity]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[severity]"
+                      name="severity" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[severityDesc]"
+                      name="severityDesc" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Finalise the alarms\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[Alarms_Final]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Finalise the alarms\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[id]"
+                      cachedDataType="i4"
+                      cachedName="id"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[id]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[nid]"
+                      cachedDataType="i4"
+                      cachedName="nid"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[nid]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[nid]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[fullname]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="254"
+                      cachedName="fullname"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[fullname]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[fullname]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[message]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="253"
+                      cachedName="message"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[message]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[message]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[statedesc]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="31"
+                      cachedName="statedesc"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[statedesc]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[statedesc]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[conditionActiveTime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="conditionActiveTime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[conditionActiveTime]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[LocalTime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="LocalTime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LocalTime]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[LocalTime]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[severity]"
+                      cachedDataType="i4"
+                      cachedName="severity"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severity]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severity]" />
+                    <inputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[severityDesc]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="31"
+                      cachedName="severityDesc"
+                      externalMetadataColumnId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severityDesc]"
+                      lineageId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output].Columns[severityDesc]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[nid]"
+                      dataType="i4"
+                      name="nid" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="fullname" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      name="message" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="statedesc" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[LocalTime]"
+                      dataType="dbTimeStamp2"
+                      name="LocalTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severity]"
+                      dataType="i4"
+                      name="severity" />
+                    <externalMetadataColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="severityDesc" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Finalise the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Finalise the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Finalise the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Finalise the alarms.Paths[OLE DB Source Output]"
+              endId="Package\Finalise the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Finalise the alarms\Merge the data.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Get the alarms"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{3866575F-DF4C-4C6F-8673-AE0C04734612}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Get the alarms"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Get the alarms\Get the First Data"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Get the First Data"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select id, condname, message,conditionActiveTime,state,statedesc,severity,severityDesc
+ from CLEARSCADA..Core.CAlarm 
+where  State in (3,4)</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get the alarms\Get the First Data.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[id]"
+                      name="id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[condname]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[condname]"
+                      length="63"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[condname]"
+                      name="condname"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[message]"
+                      length="253"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[message]"
+                      name="message"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[conditionActiveTime]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]"
+                      name="conditionActiveTime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[state]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[state]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[state]"
+                      name="state"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[statedesc]"
+                      length="31"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[statedesc]"
+                      name="statedesc"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severity]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[severity]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severity]"
+                      name="severity"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[severityDesc]"
+                      length="31"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severityDesc]"
+                      name="severityDesc"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[condname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      name="condname" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      name="message" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[state]"
+                      dataType="i4"
+                      name="state" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="statedesc" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[severity]"
+                      dataType="i4"
+                      name="severity" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].ExternalColumns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="severityDesc" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      name="id" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[condname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[condname]"
+                      name="condname" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[message]"
+                      name="message" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[conditionActiveTime]"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[state]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[state]"
+                      name="state" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[statedesc]"
+                      name="statedesc" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[severity]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[severity]"
+                      name="severity" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[severityDesc]"
+                      name="severityDesc" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Get the alarms\Get the Name Data"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Get the Name Data"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select  id, fullname, alarmstate  from CLEARSCADA..Core.CDBPoint   where alarmstate in (3,4)</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get the alarms\Get the Name Data.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[id]"
+                      name="id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[fullname]"
+                      length="254"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[fullname]"
+                      name="fullname"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[alarmstate]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[alarmstate]"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[alarmstate]"
+                      name="alarmstate"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="fullname" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].ExternalColumns[alarmstate]"
+                      dataType="i4"
+                      name="alarmstate" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[id]"
+                      name="id" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[fullname]"
+                      name="fullname" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[alarmstate]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[alarmstate]"
+                      name="alarmstate" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Get the alarms\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[Alarms_part1]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get the alarms\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[id]"
+                      cachedDataType="i4"
+                      cachedName="id"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[id]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[condname]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="63"
+                      cachedName="condname"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[condname]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[condname]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[message]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="253"
+                      cachedName="message"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[message]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[message]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[conditionActiveTime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="conditionActiveTime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[conditionActiveTime]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[conditionActiveTime]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[state]"
+                      cachedDataType="i4"
+                      cachedName="state"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[state]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[state]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[statedesc]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="31"
+                      cachedName="statedesc"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[statedesc]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[statedesc]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[severity]"
+                      cachedDataType="i4"
+                      cachedName="severity"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severity]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severity]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[severityDesc]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="31"
+                      cachedName="severityDesc"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severityDesc]"
+                      lineageId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output].Columns[severityDesc]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[condname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      name="condname" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[message]"
+                      codePage="1252"
+                      dataType="str"
+                      length="253"
+                      name="message" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[conditionActiveTime]"
+                      dataType="dbTimeStamp2"
+                      name="conditionActiveTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[state]"
+                      dataType="i4"
+                      name="state" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[statedesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="statedesc" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severity]"
+                      dataType="i4"
+                      name="severity" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[severityDesc]"
+                      codePage="1252"
+                      dataType="str"
+                      length="31"
+                      name="severityDesc" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Get the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Get the alarms\OLE DB Destination 1"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination 1"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[Alarms_Names]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get the alarms\OLE DB Destination 1.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[id]"
+                      cachedDataType="i4"
+                      cachedName="id"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[id]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[fullname]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="254"
+                      cachedName="fullname"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[fullname]"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[fullname]" />
+                    <inputColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].Columns[alarmstate]"
+                      cachedDataType="i4"
+                      cachedName="alarmstate"
+                      externalMetadataColumnId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[alarmstate]"
+                      lineageId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output].Columns[alarmstate]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[fullname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="fullname" />
+                    <externalMetadataColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input].ExternalColumns[alarmstate]"
+                      dataType="i4"
+                      name="alarmstate" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Get the alarms\OLE DB Destination 1.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get the alarms\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get the alarms\OLE DB Destination 1.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Get the alarms.Paths[OLE DB Source Output]"
+              endId="Package\Get the alarms\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Get the alarms\Get the First Data.Outputs[OLE DB Source Output]" />
+            <path
+              refId="Package\Get the alarms.Paths[OLE DB Source Output1]"
+              endId="Package\Get the alarms\OLE DB Destination 1.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Get the alarms\Get the Name Data.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Get Who is logged on"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{CD39300D-B2AF-4E0D-ADAE-C03844ABC5A0}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Get Who is logged on"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Get Who is logged on\Get who is logged on"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Get who is logged on"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor">select id,name,windowsusername,parentgroupname, isloggedon, lastlogontime as currentlogonTime,
+dateadd (mi, Datediff(mi,GETUTCDATE(), GETDATE()), lastlogontime) as CurrentlogonTimeLocal,
+ previousLogoffTime, dateadd (mi, Datediff(mi,GETUTCDATE(), GETDATE()), previousLogoffTime) as PreviousLoggoffTimeLocal,
+ previousLogOntime, dateadd (mi, Datediff(mi,GETUTCDATE(), GETDATE()), previousLogontime)as PreviousLogOnTimeLocal
+
+from ClearScada..Kernel.CDBUser
+where isloggedon = 1</property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">2</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get Who is logged on\Get who is logged on.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[id]"
+                      dataType="i4"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[id]"
+                      name="id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[name]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[name]"
+                      length="63"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[name]"
+                      name="name"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[windowsusername]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[windowsusername]"
+                      length="255"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[windowsusername]"
+                      name="windowsusername"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[parentgroupname]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[parentgroupname]"
+                      length="254"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[parentgroupname]"
+                      name="parentgroupname"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[isloggedon]"
+                      dataType="bool"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[isloggedon]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[isloggedon]"
+                      name="isloggedon"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[currentlogonTime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[currentlogonTime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[currentlogonTime]"
+                      name="currentlogonTime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[CurrentlogonTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[CurrentlogonTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[CurrentlogonTimeLocal]"
+                      name="CurrentlogonTimeLocal"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogoffTime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[previousLogoffTime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogoffTime]"
+                      name="previousLogoffTime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLoggoffTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[PreviousLoggoffTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLoggoffTimeLocal]"
+                      name="PreviousLoggoffTimeLocal"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogOntime]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[previousLogOntime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogOntime]"
+                      name="previousLogOntime"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLogOnTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[PreviousLogOnTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLogOnTimeLocal]"
+                      name="PreviousLogOnTimeLocal"
+                      scale="7"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[name]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      name="name" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[windowsusername]"
+                      codePage="1252"
+                      dataType="str"
+                      length="255"
+                      name="windowsusername" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[parentgroupname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="parentgroupname" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[isloggedon]"
+                      dataType="bool"
+                      name="isloggedon" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[currentlogonTime]"
+                      dataType="dbTimeStamp2"
+                      name="currentlogonTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[CurrentlogonTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="CurrentlogonTimeLocal"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[previousLogoffTime]"
+                      dataType="dbTimeStamp2"
+                      name="previousLogoffTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[PreviousLoggoffTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="PreviousLoggoffTimeLocal"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[previousLogOntime]"
+                      dataType="dbTimeStamp2"
+                      name="previousLogOntime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].ExternalColumns[PreviousLogOnTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="PreviousLogOnTimeLocal"
+                      scale="7" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[id]"
+                      dataType="i4"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[id]"
+                      name="id" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[name]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[name]"
+                      name="name" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[windowsusername]"
+                      codePage="1252"
+                      dataType="str"
+                      length="255"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[windowsusername]"
+                      name="windowsusername" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[parentgroupname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[parentgroupname]"
+                      name="parentgroupname" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[isloggedon]"
+                      dataType="bool"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[isloggedon]"
+                      name="isloggedon" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[currentlogonTime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[currentlogonTime]"
+                      name="currentlogonTime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[CurrentlogonTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[CurrentlogonTimeLocal]"
+                      name="CurrentlogonTimeLocal"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[previousLogoffTime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[previousLogoffTime]"
+                      name="previousLogoffTime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[PreviousLoggoffTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[PreviousLoggoffTimeLocal]"
+                      name="PreviousLoggoffTimeLocal"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[previousLogOntime]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[previousLogOntime]"
+                      name="previousLogOntime"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[PreviousLogOnTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[PreviousLogOnTimeLocal]"
+                      name="PreviousLogOnTimeLocal"
+                      scale="7" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Get Who is logged on\Write to table CS_Logged_On"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="Write to table CS_Logged_On"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[CS_Logged_On]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Get Who is logged on\Write to table CS_Logged_On.Connections[OleDbConnection]"
+                  connectionManagerID="{41F5D3D1-4EB8-4B79-AD7C-19CCCE23E37D}:external"
+                  connectionManagerRefId="Project.ConnectionManagers[swsvr07.OnCall2]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[id]"
+                      cachedDataType="i4"
+                      cachedName="id"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[id]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[name]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="63"
+                      cachedName="name"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[name]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[name]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[windowsusername]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="255"
+                      cachedName="windowsusername"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[windowsusername]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[windowsusername]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[parentgroupname]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="254"
+                      cachedName="parentgroupname"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[parentgroupname]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[parentgroupname]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[isloggedon]"
+                      cachedDataType="bool"
+                      cachedName="isloggedon"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[isloggedon]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[isloggedon]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[currentlogonTime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="currentlogonTime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[currentlogonTime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[currentlogonTime]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[CurrentlogonTimeLocal]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="CurrentlogonTimeLocal"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[CurrentlogonTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[CurrentlogonTimeLocal]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[previousLogoffTime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="previousLogoffTime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[previousLogoffTime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogoffTime]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[PreviousLoggoffTimeLocal]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="PreviousLoggoffTimeLocal"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[PreviousLoggoffTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLoggoffTimeLocal]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[previousLogOntime]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="previousLogOntime"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[previousLogOntime]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[previousLogOntime]" />
+                    <inputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].Columns[PreviousLogOnTimeLocal]"
+                      cachedDataType="dbTimeStamp2"
+                      cachedName="PreviousLogOnTimeLocal"
+                      cachedScale="7"
+                      externalMetadataColumnId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[PreviousLogOnTimeLocal]"
+                      lineageId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output].Columns[PreviousLogOnTimeLocal]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[id]"
+                      dataType="i4"
+                      name="id" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[name]"
+                      codePage="1252"
+                      dataType="str"
+                      length="63"
+                      name="name" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[windowsusername]"
+                      codePage="1252"
+                      dataType="str"
+                      length="255"
+                      name="windowsusername" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[parentgroupname]"
+                      codePage="1252"
+                      dataType="str"
+                      length="254"
+                      name="parentgroupname" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[isloggedon]"
+                      dataType="bool"
+                      name="isloggedon" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[currentlogonTime]"
+                      dataType="dbTimeStamp2"
+                      name="currentlogonTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[CurrentlogonTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="CurrentlogonTimeLocal"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[previousLogoffTime]"
+                      dataType="dbTimeStamp2"
+                      name="previousLogoffTime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[PreviousLoggoffTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="PreviousLoggoffTimeLocal"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[previousLogOntime]"
+                      dataType="dbTimeStamp2"
+                      name="previousLogOntime"
+                      scale="7" />
+                    <externalMetadataColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input].ExternalColumns[PreviousLogOnTimeLocal]"
+                      dataType="dbTimeStamp2"
+                      name="PreviousLogOnTimeLocal"
+                      scale="7" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Get Who is logged on\Write to table CS_Logged_On.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Get Who is logged on\Write to table CS_Logged_On.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Get Who is logged on\Write to table CS_Logged_On.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Get Who is logged on\Write to table CS_Logged_On.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Get Who is logged on.Paths[OLE DB Source Output]"
+              endId="Package\Get Who is logged on\Write to table CS_Logged_On.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Get Who is logged on\Get who is logged on.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{D1161A25-F394-4675-98D4-377339D5F101}"
+      DTS:From="Package\Clear the tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Get the alarms" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{367CEE88-87F0-45F1-88C8-7266AA4B7B51}"
+      DTS:From="Package\Get the alarms"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Get Who is logged on" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{E26CCFD1-4BFA-4F2C-9003-B9C58338B276}"
+      DTS:From="Package\Get Who is logged on"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Finalise the alarms" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="153,42"
+          Id="Package\Clear the tables"
+          TopLeft="78,30" />
+        <NodeLayout
+          Size="148,42"
+          Id="Package\Get the alarms"
+          TopLeft="106,147" />
+        <NodeLayout
+          Size="180,42"
+          Id="Package\Get Who is logged on"
+          TopLeft="167,266" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="154.5,72">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="25.5,75"
+              Start="0,0"
+              End="25.5,67.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,33.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,33.5"
+                    Point2="0,37.5"
+                    Point3="4,37.5" />
+                  <mssgle:LineSegment
+                    End="21.5,37.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="21.5,37.5"
+                    Point2="25.5,37.5"
+                    Point3="25.5,41.5" />
+                  <mssgle:LineSegment
+                    End="25.5,67.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="180,189">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="77,77"
+              Start="0,0"
+              End="77,69.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,34.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,34.5"
+                    Point2="0,38.5"
+                    Point3="4,38.5" />
+                  <mssgle:LineSegment
+                    End="73,38.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="73,38.5"
+                    Point2="77,38.5"
+                    Point3="77,42.5" />
+                  <mssgle:LineSegment
+                    End="77,69.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="167,42"
+          Id="Package\Finalise the alarms"
+          TopLeft="206,344" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="257,308">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="32.5,36"
+              Start="0,0"
+              End="32.5,28.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14"
+                    Point2="0,18"
+                    Point3="4,18" />
+                  <mssgle:LineSegment
+                    End="28.5,18" />
+                  <mssgle:CubicBezierSegment
+                    Point1="28.5,18"
+                    Point2="32.5,18"
+                    Point3="32.5,22" />
+                  <mssgle:LineSegment
+                    End="32.5,28.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Get the alarms">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Get the alarms\Get the First Data"
+          TopLeft="148,78" />
+        <NodeLayout
+          Size="171,42"
+          Id="Package\Get the alarms\OLE DB Destination"
+          TopLeft="147,243" />
+        <EdgeLayout
+          Id="Package\Get the alarms.Paths[OLE DB Source Output]"
+          TopLeft="231,120">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,123"
+              Start="0,0"
+              End="0,115.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,115.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="170,42"
+          Id="Package\Get the alarms\Get the Name Data"
+          TopLeft="421,83" />
+        <NodeLayout
+          Size="180,42"
+          Id="Package\Get the alarms\OLE DB Destination 1"
+          TopLeft="418,245" />
+        <EdgeLayout
+          Id="Package\Get the alarms.Paths[OLE DB Source Output1]"
+          TopLeft="507,125">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,120"
+              Start="0,0"
+              End="0,112.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,112.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get the alarms\Get the First Data">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Get Who is logged on">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="179,42"
+          Id="Package\Get Who is logged on\Get who is logged on"
+          TopLeft="223,78" />
+        <NodeLayout
+          Size="218,42"
+          Id="Package\Get Who is logged on\Write to table CS_Logged_On"
+          TopLeft="313,196" />
+        <EdgeLayout
+          Id="Package\Get Who is logged on.Paths[OLE DB Source Output]"
+          TopLeft="312.5,120">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="109.5,76"
+              Start="0,0"
+              End="109.5,68.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,34" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,34"
+                    Point2="0,38"
+                    Point3="4,38" />
+                  <mssgle:LineSegment
+                    End="105.5,38" />
+                  <mssgle:CubicBezierSegment
+                    Point1="105.5,38"
+                    Point2="109.5,38"
+                    Point3="109.5,42" />
+                  <mssgle:LineSegment
+                    End="109.5,68.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="0,0,0,0"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get Who is logged on\Get who is logged on">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get Who is logged on\Write to table CS_Logged_On">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get the alarms\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get the alarms\Get the Name Data">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Get the alarms\OLE DB Destination 1">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <TaskHost
+    design-time-name="Package\Finalise the alarms">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="151,42"
+          Id="Package\Finalise the alarms\Merge the data"
+          TopLeft="166,135" />
+        <NodeLayout
+          Size="171,42"
+          Id="Package\Finalise the alarms\OLE DB Destination"
+          TopLeft="278,283" />
+        <EdgeLayout
+          Id="Package\Finalise the alarms.Paths[OLE DB Source Output]"
+          TopLeft="241.5,177">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="122,106"
+              Start="0,0"
+              End="122,98.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,49" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,49"
+                    Point2="0,53"
+                    Point3="4,53" />
+                  <mssgle:LineSegment
+                    End="118,53" />
+                  <mssgle:CubicBezierSegment
+                    Point1="118,53"
+                    Point2="122,53"
+                    Point3="122,57" />
+                  <mssgle:LineSegment
+                    End="122,98.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Finalise the alarms\Merge the data">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Finalise the alarms\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
